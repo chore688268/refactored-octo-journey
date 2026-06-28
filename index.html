@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ 终极解压：马东锡连环大耳刮子 ⚡</title>
+    <style>
+        * { box-sizing: border-box; }
+        
+        body { 
+            margin: 0; 
+            background: #282c34; 
+            color: white; 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            overflow: hidden; 
+            user-select: none; 
+            transition: background 0.1s;
+        }
+
+        #ui-container {
+            text-align: center;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+
+        .text-display {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        #dummy-wrap { 
+            width: 200px; 
+            height: 250px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            z-index: 2; 
+            margin-bottom: 20px;
+        }
+
+        #dummy { 
+            width: 120px; 
+            height: 180px; 
+            background: linear-gradient(135deg, #ff7b00, #ffae00); 
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            cursor: pointer; 
+            background-size: cover; 
+            background-position: center; 
+            transition: transform 0.05s linear, filter 0.2s linear;
+        }
+
+        /* 纯 CSS 绘制真人巴掌替身 */
+        #slap-hand { 
+            position: absolute; 
+            width: 120px; 
+            height: 150px; 
+            background: #ffe0b2; 
+            border: 3px solid #d38f2a;
+            border-radius: 50px 10px 10px 50px;
+            top: 15px; 
+            right: -80px; 
+            opacity: 0; 
+            pointer-events: none; 
+            z-index: 100; 
+            transform-origin: bottom right;
+        }
+
+        #slap-hand::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            left: 15px;
+            width: 30px;
+            height: 100px;
+            border-left: 6px solid rgba(211, 143, 42, 0.4);
+            border-radius: 50%;
+        }
+
+        @keyframes madongxiSlap { 
+            0% { opacity: 0; transform: translate(20px, 20px) rotate(-20deg) scale(0.6); } 
+            30% { opacity: 1; transform: translate(-100px, -10px) rotate(-5deg) scale(1.1); } 
+            45% { opacity: 0.8; transform: translate(-120px, -15px) rotate(0deg) scale(0.95); } 
+            100% { opacity: 0; transform: translate(50px, 100px) rotate(30deg) scale(0.5); } 
+        }
+
+        .btn-group { 
+            display: flex; 
+            flex-direction: column;
+            gap: 12px; 
+            z-index: 2; 
+        }
+
+        .btn-row {
+            display: flex; 
+            gap: 20px;
+        }
+
+        button { 
+            padding: 12px 25px; 
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px; 
+            border: none; 
+            cursor: pointer; 
+            color: #fff; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.1s, filter 0.2s;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        #start { background: #28a745; }
+        #start:hover { filter: brightness(1.1); }
+        #stop { background: #dc3545; }
+        #stop:hover { filter: brightness(1.1); }
+        #uploadBtn { background: #007bff; }
+        #uploadBtn:hover { filter: brightness(1.1); }
+
+        #effects { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            pointer-events: none; 
+            z-index: 1; 
+            overflow: hidden; 
+        }
+
+        #flash { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: #ffffff; 
+            opacity: 0; 
+            pointer-events: none; 
+            z-index: 99; 
+            transition: opacity 0.08s ease-out; 
+        }
+
+        .comic {
+            position: absolute;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-style: italic;
+            color: #ffcc00;
+            text-shadow: -2px 2px 0 #000, 2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000;
+            animation: popUp 0.65s ease-out forwards;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        @keyframes popUp {
+            0% { transform: translate(-50%, -50%) scale(0.5) rotate(0deg); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.4) rotate(-5deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.0) rotate(5deg); opacity: 0; }
+        }
+
+        .star {
+            position: absolute;
+            background: radial-gradient(circle, #fff 10%, #ffcc00 60%, transparent 100%);
+            border-radius: 50%;
+            animation: starBurst 0.7s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes starBurst {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px))) scale(0.2); opacity: 0; }
+        }
+
+        .spark {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ff5500;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ffff00;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="flash"></div>
+
+    <div id="ui-container">
+        <div id="combo" class="text-display">COMBO : 0</div>
+        <div id="coins" class="text-display">COINS : 0</div>
+    </div>
+
+    <div id="dummy-wrap">
+        <div id="dummy" onclick="slapOnce()">🥊</div>
+        <div id="slap-hand"></div>
+    </div>
+
+    <input type="file" id="photoInput" accept="image/*" style="display: none;">
+
+    <div class="btn-group">
+        <button id="uploadBtn">📷 导入相册自定义照片</button>
+        <div class="btn-row">
+            <button id="start">开始连打</button>
+            <button id="stop">暂停</button>
+        </div>
+    </div>
+
+    <div id="effects"></div>    <script>
+        // ===============================
+        // Slap Dummy - Game Core 状态声明
+        // ===============================
+        const game = {
+            running: false,
+            combo: 0,
+            coins: 0,
+            rage: 0,
+            slapPower: 1,
+            slapSpeed: 35,
+            vibration: true,
+            sound: true,
+            effects: true
+        };
+
+        const dummy = {
+            hp: Infinity,
+            rotation: 0,
+            shake: 0,
+            scale: 1
+        };
+
+        const ui = {
+            comboText: document.getElementById("combo"),
+            coinText: document.getElementById("coins"),
+            startBtn: document.getElementById("start"),
+            stopBtn: document.getElementById("stop"),
+            dummy: document.getElementById("dummy"),
+            uploadBtn: document.getElementById("uploadBtn"),
+            photoInput: document.getElementById("photoInput"),
+            slapHand: document.getElementById("slap-hand")
+        };
+
+        // ===============================
+        // 图片上传逻辑
+        // ===============================
+        ui.uploadBtn.onclick = () => {
+            ui.photoInput.click();
+        };
+
+        ui.photoInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    ui.dummy.style.backgroundImage = `url(${event.target.result})`;
+                    ui.dummy.innerText = ""; 
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        function updateUI() {
+            ui.comboText.innerText = "COMBO : " + game.combo;
+            ui.coinText.innerText = "COINS : " + game.coins;
+        }        // ===============================
+        // 马东锡重磅大耳刮子清脆音效与动画
+        // ===============================
+        function playMaDongXiSlap() {
+            if (!game.sound) return;
+
+            // 触发真人巴掌挥动 CSS 动画
+            ui.slapHand.style.animation = 'none';
+            void ui.slapHand.offsetHeight; 
+            ui.slapHand.style.animation = 'madongxiSlap 0.18s cubic-bezier(0.25, 1, 0.5, 1) forwards';
+
+            // 网页合成清脆大声耳光特效
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // 1. 低频肉质打击感
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(450, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.18);
+                gain.gain.setValueAtTime(1.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.18);
+
+                // 2. 高频清脆耳光声
+                const oscHi = ctx.createOscillator();
+                const gainHi = ctx.createGain();
+                oscHi.type = "triangle";
+                oscHi.frequency.setValueAtTime(2800, ctx.currentTime);
+                oscHi.frequency.linearRampToValueAtTime(1200, ctx.currentTime + 0.08);
+                gainHi.gain.setValueAtTime(1.5, ctx.currentTime);
+                gainHi.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                oscHi.connect(gainHi);
+                gainHi.connect(ctx.destination);
+                oscHi.start();
+                oscHi.stop(ctx.currentTime + 0.08);
+
+            } catch (webAudioErr) {
+                console.warn("Audio synthesis unavailable.");
+            }
+        }
+
+        function vibratePhone() {
+            if (!game.vibration) return;
+            if (navigator.vibrate) navigator.vibrate(20);
+        }
+
+        function rotateDummy() {
+            dummy.rotation += Math.random() * 18 - 9;
+            ui.dummy.style.transform = `rotate(${dummy.rotation}deg) scale(${dummy.scale})`;
+        }
+
+        function slapEffect() {
+            playMaDongXiSlap(); 
+            vibratePhone();
+            rotateDummy();
+        }
+
+        function gainReward() {
+            game.combo++;
+            game.coins += Math.floor(game.combo / 10) + 1;
+            game.rage++;
+            updateUI();
+        }
+
+        let slapOnce = function() {
+            slapEffect();
+            gainReward();
+        };
+
+        function loop() {
+            if (!game.running) return;
+            slapOnce();
+            setTimeout(loop, game.slapSpeed);
+        }
+
+        ui.startBtn.onclick = () => {
+            if (game.running) return;
+            game.running = true;
+            loop();
+        };
+
+        ui.stopBtn.onclick = () => {
+            game.running = false;
+        };        // ===============================
+        // 视觉特效与连击奖励系统
+        // ===============================
+        const effectLayer = document.getElementById("effects");
+        const comboLevels = [50, 100, 250, 500, 1000, 2000, 5000];
+
+        function randomText() {
+            const list = ["SLAP!", "POW!", "BAM!", "BOOM!", "CRASH!", "WHACK!"];
+            return list[Math.floor(Math.random() * list.length)];
+        }
+
+        function spawnComicText() {
+            const text = document.createElement("div");
+            text.className = "comic";
+            text.innerText = randomText();
+            text.style.left = (Math.random() * 70 + 15) + "%";
+            text.style.top = (Math.random() * 45 + 15) + "%";
+            text.style.fontSize = (28 + Math.random() * 30) + "px";
+            text.style.transform = `rotate(${Math.random() * 50 - 25}deg)`;
+
+            effectLayer.appendChild(text);
+
+            setTimeout(() => {
+                text.remove();
+            }, 650);
+        }
+
+        function spawnStar() {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = Math.random() * 100 + "%";
+            star.style.top = Math.random() * 100 + "%";
+            
+            const size = 8 + Math.random() * 14;
+            star.style.width = size + "px";
+            star.style.height = size + "px";
+
+            const dx = (Math.random() - 0.5) * 300;
+            const dy = (Math.random() - 0.5) * 300;
+            star.style.setProperty('--dx', `${dx}px`);
+            star.style.setProperty('--dy', `${dy}px`);
+
+            effectLayer.appendChild(star);
+
+            setTimeout(() => {
+                star.remove();
+            }, 700);
+        }
+
+        function burstStars() {
+            for (let i = 0; i < 12; i++) {
+                spawnStar();
+            }
+        }
+
+        function headSwing() {
+            dummy.rotation += Math.random() * 40 - 20;
+            ui.dummy.style.transform = `rotate(${dummy.rotation}deg) scale(${dummy.scale})`;
+        }
+
+        function glowDummy() {
+            ui.dummy.style.filter = "drop-shadow(0 0 30px gold)";
+        }
+
+        function comboBoost() {
+            if (game.combo > 200) {
+                game.slapSpeed = 28;
+            }
+            if (game.combo > 500) {
+                game.slapSpeed = 22;
+            }
+            if (game.combo > 1000) {
+                game.slapSpeed = 16;
+                glowDummy();
+            }
+        }
+
+        function comboReward() {
+            comboLevels.forEach(level => {
+                if (game.combo === level) {
+                    game.coins += level;
+                    spawnComicText();
+                    burstStars();
+                }
+            });
+        }
+
+        // ===============================
+        // 高级震屏与火花粒子系统
+        // ===============================
+        let screenPower = 0;
+        let flashAlpha = 0;
+
+        function addScreenPower(v){
+            screenPower += v;
+            if(screenPower > 30) screenPower = 30;
+        }
+
+        function updateScreenShake(){
+            if(screenPower <= 0){
+                document.body.style.transform = "";
+                return;
+            }
+
+            const x = (Math.random() - 0.5) * screenPower;
+            const y = (Math.random() - 0.5) * screenPower;
+            const r = (Math.random() - 0.5) * 2;
+
+            document.body.style.transform = `translate(${x}px,${y}px) rotate(${r}deg)`;
+            screenPower *= 0.88;
+        }
+
+        function createSpark(){
+            const p = document.createElement("div");
+            p.className = "spark";
+            p.style.left = (45 + Math.random() * 10) + "%";
+            p.style.top = (35 + Math.random() * 20) + "%";
+            p.style.opacity = 1;
+
+            effectLayer.appendChild(p);
+
+            let life = 25;
+            const timer = setInterval(()=>{
+                life--;
+                p.style.transform = `translate(${(Math.random() - 0.5) * 180}px, ${(Math.random() - 0.5) * 180}px) scale(${life / 25})`;
+                p.style.opacity = life / 25;
+
+                if(life <= 0){
+                    clearInterval(timer);
+                    p.remove();
+                }
+            }, 16);
+        }
+
+        function sparkBurst(){
+            for(let i = 0; i < 20; i++){
+                createSpark();
+            }
+        }
+
+        function flashScreen(){
+            flashAlpha = 0.6;
+        }
+
+        function updateFlash(){
+            const flash = document.getElementById("flash");
+            flash.style.opacity = flashAlpha;
+            flashAlpha *= 0.85;
+        }
+
+        function rainCoins(){
+            game.coins += 5;
+            updateUI();
+        }
+
+        function superSlap() {
+            addScreenPower(25); // 触发重击震屏强度
+            flashScreen();
+            sparkBurst();
+            rainCoins();
+        }
+
+        function advancedEffectLoop() {
+            updateScreenShake();
+            updateFlash();
+            requestAnimationFrame(advancedEffectLoop);
+        }
+        requestAnimationFrame(advancedEffectLoop);
+
+        // 覆盖强化 slapOnce 钩子链条
+        const oldSlap = slapOnce;
+        slapOnce = function() {
+            oldSlap();
+            spawnComicText();
+            burstStars();
+            headSwing();
+            comboBoost();
+            comboReward();
+            superSlap(); // 触发暴力特效及震屏
+        };
+
+        // 狂暴模式监听
+        function enableRageMode() {
+            if (game.rage < 100) return;
+            game.slapSpeed = 18;
+            dummy.scale = 1.08;
+        }
+
+        function disableRageMode() {
+            game.slapSpeed = 35;
+            dummy.scale = 1;
+        }
+
+        setInterval(() => {
+            if (game.rage >= 100) enableRageMode();
+            else disableRageMode();
+        }, 100);
+
+        updateUI();
+    </script>
+</body>
+</html>
